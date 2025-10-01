@@ -1,8 +1,7 @@
 from flask import Blueprint
 from flask_restful import Api
 
-from resources import UserResource
-from resources import UserDetailResource
+from resources import UserResource, UserDetailResource
 
 user_route = Blueprint("user_route", __name__)
 

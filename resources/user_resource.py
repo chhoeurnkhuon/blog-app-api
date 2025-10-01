@@ -2,26 +2,34 @@ from flask_restful import Resource
 from flask import make_response, request, jsonify
 from models import User
 from app.extension import db
-from schemas.user_schema import UserSchema
-from schemas.users_schema import UsersSchema
+from datetime import datetime
 
-user_schema = UserSchema()
-users_schema = UsersSchema(many=True)
+from schemas import UserResponseSchema, UserDetailsResponseSchema, CreateUserSchema, UpdateUserSchema
+
+user_response_schema = UserResponseSchema(many=True)
+user_details_response_schema = UserDetailsResponseSchema()
+create_user_schema = CreateUserSchema()
+update_user_schema = UpdateUserSchema()
 
 class UserResource(Resource):
     def get(self):
         users = User.query.all()
-        result = users_schema.dump(users)
+        result = user_response_schema.dump(users)
         return make_response({"user": result}, 200)
 
     def post(self):
         data = request.get_json()
-        errors = user_schema.validate(data)
+        errors = create_user_schema.validate(data)
         
         if errors: 
             return jsonify(errors), 400
         
-        new_user =  User(**data)
+        new_user =  User(
+            username = data["username"],
+            password = data["password"],
+            gender = data["gender"],
+            created_at = datetime.now()
+        )
         
         try:
            db.session.add(new_user)
@@ -30,6 +38,6 @@ class UserResource(Resource):
             db.session.rollback()
             return make_response({"error": str(e)}, 500)
             
-        result = user_schema.dump(new_user)
+        result = user_details_response_schema.dump(new_user)
         
         return make_response(result, 201)

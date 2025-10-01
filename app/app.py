@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 import os
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
-
 load_dotenv()
 
 def create_app():
@@ -19,9 +17,10 @@ def create_app():
     Migrate(app, db)
 
     from models import User
-    from routes import user_route
+    from routes import user_route, blog_route
     
     app.register_blueprint(user_route)
+    app.register_blueprint(blog_route)
 
     @app.route("/")
     def home():
