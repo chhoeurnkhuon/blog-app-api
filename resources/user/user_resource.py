@@ -1,8 +1,9 @@
 from flask_restful import Resource
 from flask import make_response, request, jsonify
 from models import User
-from app.extension import db
+from app import db
 from datetime import datetime
+import bcrypt
 
 from schemas import UserResponseSchema, UserDetailsResponseSchema, CreateUserSchema, UpdateUserSchema
 
@@ -24,9 +25,13 @@ class UserResource(Resource):
         if errors: 
             return jsonify(errors), 400
         
+        existing_user = User.query.filter_by(username = data["username"]).first()
+        if existing_user:
+            return make_response({"error": "User alreay exist"}, 409)
+        
         new_user =  User(
             username = data["username"],
-            password = data["password"],
+            password = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             gender = data["gender"],
             created_at = datetime.now()
         )

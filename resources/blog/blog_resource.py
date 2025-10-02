@@ -1,8 +1,9 @@
 from flask_restful import Resource
 from flask import make_response, request, jsonify
 from models import Blog
-from app.extension import db
+from app import db
 from datetime import datetime
+from flask_jwt_extended import jwt_required
 
 from schemas import CreateBlogSchema, BlogResponseSchema,BlogDetailsResponseSchema 
 
@@ -19,6 +20,7 @@ class BlogResource(Resource):
         result = blog_response_schema.dump(blogs)
         return make_response({"blogs": result}, 200)
     
+    @jwt_required()
     def post(self):
         blog = request.get_json()
         errors = create_blog_schema.validate(blog)

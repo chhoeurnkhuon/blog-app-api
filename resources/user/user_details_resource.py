@@ -1,8 +1,9 @@
 from flask_restful import Resource
 from flask import make_response, request
 from models import User
-from app.extension import db
+from app import db
 from datetime import datetime
+from flask_jwt_extended import jwt_required
 
 from schemas import UserDetailsResponseSchema, UpdateUserSchema
 
@@ -10,6 +11,8 @@ user_details_response_schema = UserDetailsResponseSchema()
 update_user_schema = UpdateUserSchema()
 
 class UserDetailResource(Resource):
+    
+    @jwt_required()
     def get(self, id):
         user = User.query.get(id)
         
@@ -20,6 +23,7 @@ class UserDetailResource(Resource):
         
         return make_response({"user": result}, 200)
     
+    @jwt_required()
     def patch(self, id):
         user = User.query.get(id)
         if not user:
@@ -39,6 +43,7 @@ class UserDetailResource(Resource):
         db.session.commit()
         return user_details_response_schema.dump(user), 200
     
+    @jwt_required()
     def delete(self, id):
         user = User.query.get(id)
         if not user:
