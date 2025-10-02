@@ -14,6 +14,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     ## allow jwt
+    app.config['JWT_SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['JWT_VERIFY_SUB'] = False
     
     ## allow exception handler

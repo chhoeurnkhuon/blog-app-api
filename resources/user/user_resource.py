@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import make_response, request, jsonify
-from models import User
+from models import User, Role
 from app import db
 from datetime import datetime
 import bcrypt
@@ -29,12 +29,18 @@ class UserResource(Resource):
         if existing_user:
             return make_response({"error": "User alreay exist"}, 409)
         
+        role = Role.query.filter_by(role_name=data["role_name"]).first()
+        if not role:
+            return make_response({"error": "Role not found"}, 400)
+        
         new_user =  User(
             username = data["username"],
             password = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             gender = data["gender"],
             created_at = datetime.now()
         )
+        
+        new_user.roles.append(role)
         
         try:
            db.session.add(new_user)

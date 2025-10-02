@@ -1,5 +1,7 @@
 from app import db
 from datetime import datetime
+from .user_role import user_roles
+from sqlalchemy.orm import relationship
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -15,3 +17,6 @@ class User(db.Model):
     
     ## an user can created many comments
     comments = db.relationship("Comment", back_populates="author")
+    
+    ## user has many roles
+    roles = db.relationship("Role", secondary=user_roles, back_populates="users")
