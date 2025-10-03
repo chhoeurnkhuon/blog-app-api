@@ -12,6 +12,8 @@ from .blog_schemas.comment_list_response_schema import CommentListResponseSchema
 
 from .comment_schemas.comment_response_schema import CommentResponseSchema
 from .comment_schemas.create_comment_schema import CreateCommentSchema
+from .comment_schemas.comment_details_response_schema import CommentDetailsResponse
+from .comment_schemas.update_comment_schema import UpdateCommentSchema
 
 from .auth_schemas.login_request_schema import LoginRequestSchema
 
@@ -27,5 +29,7 @@ __all__ = ['CreateBlogSchema',
            'UpdateUserSchema',
            'CommentResponseSchema',
            'CreateCommentSchema',
+           'CommentDetailsResponse',
+           'UpdateCommentSchema',
            'LoginRequestSchema'
            ]

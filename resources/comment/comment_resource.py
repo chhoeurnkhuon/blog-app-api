@@ -1,11 +1,12 @@
 from flask_restful import Resource
 from flask import make_response, request
 from models import Comment
-from schemas import CommentResponseSchema
-from schemas import CreateCommentSchema
+from schemas import CommentResponseSchema, CreateCommentSchema, CommentDetailsResponse
 from flask_jwt_extended import jwt_required
 from datetime import datetime
+from app import db
 
+comment_details_response = CommentDetailsResponse()
 comment_response_schema = CommentResponseSchema(many=True)
 create_comment_schema = CreateCommentSchema()
 
@@ -23,7 +24,9 @@ class CommentResource(Resource):
     
     @jwt_required()
     def post(self):
-        data = request.get_json()
+        
+        ## (force=True) used to ignore request data if not support applicaion/json
+        data = request.get_json(force=True)
         errors = create_comment_schema.validate(data)
         
         if errors:
@@ -43,7 +46,8 @@ class CommentResource(Resource):
             db.session.rollback()
             return make_response({"error": str(e)}, 500)
         
-        result = comment_response_schema.dump(new_comment)
+        ## cannot use (many=True) for one reponse
+        result = comment_details_response.dump(new_comment)
         
         return make_response({"comments": result}, 200)
         

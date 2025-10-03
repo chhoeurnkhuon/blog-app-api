@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import logging
 from flask_jwt_extended import JWTManager
+from datetime import timedelta
 
 from .error import error_handlers
 
@@ -16,6 +17,7 @@ def create_app():
     ## allow jwt
     app.config['JWT_SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['JWT_VERIFY_SUB'] = False
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=30)
     
     ## allow exception handler
     app.config['PROPAGATE_EXCEPTIONS'] = True

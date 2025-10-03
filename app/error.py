@@ -12,5 +12,5 @@ def error_handlers(app):
     def internal_server_error(error):
         logging.error(f"Internal Server Error: {error}")
         return jsonify({
-            "error": "Internal Server Error",
+            "error": str(error),
         }), 500
