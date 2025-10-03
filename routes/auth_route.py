@@ -1,10 +1,13 @@
-from flask import Blueprint
-from flask_restful import Api
+from flask import Blueprint, make_response, request
+from models import User
 
-from resources import AuthResource
+from services import AuthService
 
-auth_route = Blueprint("auth_route", __name__)
+auth_route = Blueprint("auths", __name__)
+auth_service = AuthService()
 
-api = Api(auth_route)
-
-api.add_resource(AuthResource, "/auth/login")
+@auth_route.route("/auth/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    
+    return auth_service.login(data)

@@ -1,11 +1,33 @@
-from flask import Blueprint
-from flask_restful import Api
+from flask import Blueprint, request
+from services import BlogService
+from flask import make_response, jsonify
+from app import role_required
 
-from resources import BlogResource, BlogDetailResource
+blog_service = BlogService()
+blog_route = Blueprint("blogs", __name__)
 
-blog_route = Blueprint("blog_route", __name__)
+@blog_route.route("/blogs", methods=["GET"])
+def get_all_blogs():
+    return blog_service.get_all_blog()
 
-api = Api(blog_route)
+@blog_route.route("/blogs", methods=["POST"])
+@role_required("ADMIN")
+def create_blog():
+    data = request.get_json()
+    return blog_service.create_blog(data)
 
-api.add_resource(BlogResource, "/blogs")
-api.add_resource(BlogDetailResource, "/blogs/<int:id>")
+@blog_route.route("/blogs/<int:id>", methods=["GET"])
+@role_required("ADMIN")
+def get_blog_by_id(id):
+    return blog_service.get_blog_by_id(id)
+
+@blog_route.route("/blogs/<int:id>", methods=["PATCH"])
+@role_required("ADMIN")
+def update_blog_by_id(id):
+    data = request.get_json(force=True)
+    return blog_service.update_blog_by_id(id, data)
+
+@blog_route.route("/blogs/<int:id>", methods=["DELETE"])
+@role_required("ADMIN")
+def delete_by_id(id):
+    return blog_service.delete_blog_by_id(id)

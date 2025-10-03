@@ -6,14 +6,14 @@ import bcrypt
 from schemas import LoginRequestSchema
 from models import User
 
-login_request_schema = LoginRequestSchema()
-
-class AuthResource(Resource):
+class AuthService:
     
-    def post(self):
-        data = request.get_json()
+    def __init__(self):
+        self.login_request_schema = LoginRequestSchema()
+    
+    def login(self, data):
         
-        errors = login_request_schema.validate(data)
+        errors = self.login_request_schema.validate(data)
         if errors: 
             return make_response({"error": "Something is wrong"}, 400)
         
@@ -30,5 +30,3 @@ class AuthResource(Resource):
         access_token = create_access_token(identity=user.id)
 
         return make_response({"access_token": access_token}, 200)
-        
-        
